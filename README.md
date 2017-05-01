@@ -19,14 +19,12 @@ It takes a list of operations to perform, and options are passed into the script
    * STORM_TEST - Run the test using Storm on a single node
    * SPARK_TEST - Run the test using Spark on a single node
    * FLINK_TEST - Run the test using Flink on a single node
-   * APEX_TEST  - Run the test using Apex on a single node
    * STOP_ALL - If something goes wrong stop all processes that were launched for the test.
 
 #### Environment Variables
    * STORM_VERSION - the version of Storm to compile and run against (default 0.10.0)
    * SPARK_VERSION - the version of Spark to compile and run against (default 1.5.1)
    * FLINK_VERSION - the version of Flink to compile and run against (default 0.10.1)
-   * APEX_VERSION - the version of Apex to compile and run against (default 3.4.0)
    * LOAD - the number of messages per second to send to be processed (default 1000)
    * TEST_TIME - the number of seconds to run the test for (default 240)
    * LEIN - the location of the lein executable (default lein)
@@ -35,7 +33,6 @@ It takes a list of operations to perform, and options are passed into the script
 The initial test is a simple advertising use case.
 
 Ad events arrive through kafka in a JSON format.  They are parsed to a more usable format, filtered for the ad view events that this processing cares about, the unneeded fields are removed, and then new fields are added by joining the event with campaign data stored in Redis.  Finally the ad views are aggregated by campaign and by time window and stored back into redis, along with a timestamp to indicate when they are updated.
-
 
 ### Results
 The current set of results that we care about are comparing the latency that a particular processing system can produce at a given input load.
