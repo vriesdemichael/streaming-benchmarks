@@ -5,7 +5,7 @@
   :dependencies [[org.clojure/clojure "1.8.0"]
                  [org.clojure/tools.cli "0.3.5"]
                  [org.clojars.tavisrudd/redis-clojure "1.3.2"]
-                 [clj-kafka "0.3.2"]
+                 [clj-kafka "0.3.4"]
                  [clj-json "0.5.3"]
                  [clj-yaml "0.4.0"]]
   :main setup.core
