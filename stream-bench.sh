@@ -15,7 +15,7 @@ KAFKA_VERSION=${KAFKA_VERSION:-"0.10.2.0"}
 REDIS_VERSION=${REDIS_VERSION:-"3.2.8"}
 SCALA_BIN_VERSION=${SCALA_BIN_VERSION:-"2.11"}
 SCALA_SUB_VERSION=${SCALA_SUB_VERSION:-"11"}
-STORM_VERSION=${STORM_VERSION:-"0.9.7"}
+STORM_VERSION=${STORM_VERSION:-"1.1.0"}
 FLINK_VERSION=${FLINK_VERSION:-"1.2.0"}
 SPARK_VERSION=${SPARK_VERSION:-"2.1.0"}
 
@@ -227,7 +227,7 @@ run() {
     cd ..
   elif [ "START_STORM_TOPOLOGY" = "$OPERATION" ];
   then
-    "$STORM_DIR/bin/storm" jar ./storm-benchmarks/target/storm-benchmarks-0.1.0.jar storm.benchmark.AdvertisingTopology test-topo -conf $CONF_FILE
+    "$STORM_DIR/bin/storm" jar ./storm-benchmarks/target/storm-benchmarks-0.1.0.jar storm.benchmark.KafkaToRedis KafkaStormRedis KSR
     sleep 15
   elif [ "STOP_STORM_TOPOLOGY" = "$OPERATION" ];
   then
