@@ -54,7 +54,12 @@ public class KafkaToRedis {
 
     public static void main(String[] args) throws InvalidTopologyException, AuthorizationException, AlreadyAliveException {
 
-        String confPath = "config.properties";
+        if (args == null || args.length == 0){
+            System.err.println("Specify the config file in the first argument please.");
+            System.exit(1);
+        }
+
+        String confPath = args[1];
 
         int noWorkers = 1;
 
@@ -70,10 +75,8 @@ public class KafkaToRedis {
             Properties props = new Properties();
             InputStream input;
 
-//            File cfgFile = new File(confPath);
-            File cfgFile = new File(KafkaToRedis.class.getClassLoader().getResource(confPath).getFile());
+            File cfgFile = new File(confPath);
             input = new FileInputStream(cfgFile);
-//            input = KafkaToRedis.class.getResourceAsStream(confPath);
             props.load(input);
 
             zookeeperHost = props.getProperty(ZOOKEEPER_HOST, "localhost:2181");
@@ -116,7 +119,7 @@ public class KafkaToRedis {
         builder.setBolt("redis_store_bolt", new RedisStorePingCountBolt(redisHost, redisPort)).shuffleGrouping("windowed_count");
 
 
-        if (args != null && args.length > 0) {
+        if (args != null && args.length > 1) {
             config.setNumWorkers(noWorkers);
             StormSubmitter.submitTopologyWithProgressBar("kafka-storm-redis", config, builder.createTopology());
         } else {

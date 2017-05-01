@@ -227,7 +227,7 @@ run() {
     cd ..
   elif [ "START_STORM_TOPOLOGY" = "$OPERATION" ];
   then
-    "$STORM_DIR/bin/storm" jar ./storm-benchmarks/target/storm-benchmarks-0.1.0.jar storm.benchmark.KafkaToRedis KafkaStormRedis KSR
+    "$STORM_DIR/bin/storm" jar ./storm-benchmarks/target/storm-benchmarks-0.1.0.jar storm.benchmark.KafkaToRedis KafkaStormRedis ./conf/storm.properties
     sleep 15
   elif [ "STOP_STORM_TOPOLOGY" = "$OPERATION" ];
   then
