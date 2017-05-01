@@ -27,10 +27,10 @@ import java.util.concurrent.TimeUnit;
 
 public class PingProcessor {
 
-    private static final String JOB_NAME = "kafka (kafka -> avro -> kafka)";
-
-    private static final String PROPERTIES_PATH = "flinkJob.properties";
     private static final Logger LOG = LoggerFactory.getLogger(PingProcessor.class);
+
+    private static final String JOB_NAME = "kafka (kafka -> avro -> kafka)";
+    private static final String PROPERTIES_PATH = "flinkJob.properties";
 
     // Constants for configuring the kafka connector
     private static final String KAFKA_BOOTSTRAP = "bootstrap.servers";
@@ -42,12 +42,19 @@ public class PingProcessor {
 
     public static void main(String[] args) throws Exception {
 
+        if (args == null || args.length == 0){
+            System.err.println("Specify the config file in the first argument please.");
+            System.exit(1);
+        }
+
+        String confPath = args[0];
+
         //Get parameters from properties file or args.
         ParameterTool parameters;
-        File f = new File(PingProcessor.class.getClassLoader().getResource(PROPERTIES_PATH).getFile());
+        File f = new File(confPath);
         if(f.exists() && !f.isDirectory()) {
             LOG.debug("Found parameters in file " + PROPERTIES_PATH);
-            parameters = ParameterTool.fromPropertiesFile(PingProcessor.class.getClassLoader().getResource(PROPERTIES_PATH).getFile());
+            parameters = ParameterTool.fromPropertiesFile(confPath);
         } else {
             LOG.debug("Using args[] as parameters");
             parameters = ParameterTool.fromArgs(args);
