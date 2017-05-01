@@ -2,14 +2,14 @@
 # Licensed under the terms of the Apache License 2.0. Please see LICENSE file in the project root for terms.
 
 kafka.brokers:
-    - "BD1"
+    - "localhost"
 
 zookeeper.servers:
-    - "BD1"
+    - "localhost"
 
 kafka.port: 9092
 zookeeper.port: 2181
-redis.host: "BD1"
+redis.host: "localhost"
 kafka.topic: "processed_pings"
 kafka.partitions: 1
 
