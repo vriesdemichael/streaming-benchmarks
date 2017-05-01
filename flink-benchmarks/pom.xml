@@ -89,7 +89,7 @@
                 <configuration>
                     <archive>
                         <manifestEntries>
-                            <program-class>flink.benchmark.AdvertisingTopologyNative</program-class>
+                            <program-class>flink.benchmark.PingProcessor</program-class>
                         </manifestEntries>
                     </archive>
                 </configuration>
