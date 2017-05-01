@@ -70,8 +70,9 @@ public class KafkaToRedis {
             Properties props = new Properties();
             InputStream input;
 
-            File cfgFile = new File(confPath);
-            input = new FileInputStream(cfgFile);
+//            File cfgFile = new File(confPath);
+//            input = new FileInputStream(cfgFile);
+            input = KafkaToRedis.class.getResourceAsStream(confPath);
             props.load(input);
 
             zookeeperHost = props.getProperty(ZOOKEEPER_HOST, "localhost:2181");
