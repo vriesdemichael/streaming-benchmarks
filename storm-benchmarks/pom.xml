@@ -31,6 +31,7 @@
         <dependency>
             <groupId>org.apache.storm</groupId>
             <artifactId>storm-kafka</artifactId>
+            <scope>${provided.scope}</scope>
         </dependency>
 
         <dependency>
