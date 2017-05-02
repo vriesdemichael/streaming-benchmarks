@@ -150,6 +150,7 @@ run() {
     #Fetch Zookeeper
     ZOOKEEPER_FILE="$ZOOKEEPER_DIR.tar.gz"
     fetch_untar_file "$ZOOKEEPER_FILE" "$APACHE_MIRROR/zookeeper/$ZOOKEEPER_DIR/$ZOOKEEPER_FILE"
+    cp "$ZOOKEEPER_DIR/conf/zoo_sample.cfg" "$ZOOKEEPER_DIR/conf/zoo.cfg"
 
     #Fetch Kafka
     KAFKA_FILE="$KAFKA_DIR.tgz"
@@ -170,7 +171,6 @@ run() {
   elif [ "START_ZK" = "$OPERATION" ];
   then
     start_if_needed zookeeper ZooKeeper 10 "$ZOOKEEPER_DIR/bin/zkServer.sh" start
-    cp "$ZOOKEEPER_DIR/conf/zoo_sample.cfg" "$ZOOKEEPER_DIR/conf/zoo.cfg"
   elif [ "STOP_ZK" = "$OPERATION" ];
   then
     stop_if_needed zookeeper ZooKeeper
