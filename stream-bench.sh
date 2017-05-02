@@ -35,7 +35,7 @@ ZK_PORT="2181"
 ZK_CONNECTIONS="$ZK_HOST:$ZK_PORT"
 TOPIC=${TOPIC:-"processed_pings"}
 PARTITIONS=${PARTITIONS:-1}
-LOAD=${LOAD:-1000}
+LOAD=${LOAD:-10}
 CONF_FILE=./conf/localConf.yaml
 TEST_TIME=${TEST_TIME:-240}
 
@@ -226,7 +226,7 @@ run() {
     cd streaming-generator
     mvn package
     cd target
-    start_if_needed streaming-generator.src.main.java.StreamingDataGeneration "Load Generation" 1 java -jar streaming-generator-0.1.0.jar
+    start_if_needed streaming-generator.src.main.java.StreamingDataGeneration "Load Generation" 1 java -jar streaming-generator-1.0.jar $LOAD
     cd ../../
   elif [ "STOP_LOAD" = "$OPERATION" ];
   then

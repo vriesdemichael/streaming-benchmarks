@@ -1,9 +1,9 @@
-package main.java;
+package streaming.generator;
 
-import main.avro.Ping;
 import org.apache.avro.file.DataFileReader;
 import org.apache.avro.io.DatumReader;
 import org.apache.avro.specific.SpecificDatumReader;
+import streaming.generator.avro.Ping;
 
 import java.io.File;
 
@@ -17,12 +17,21 @@ import java.io.File;
 public class StreamingDataGenerator {
 
     public static void main(String[] args) throws Exception {
-        System.out.println("It works");
+        System.out.println("It works arg[0] = " + args[0]);
+        Long delayPerItem;
+        try {
+            System.out.println("Parselong: "+ Double.parseDouble(args[0]));
+            delayPerItem = Math.round((1D / Double.parseDouble(args[0])) * 1000);
+            System.out.println("After math round: " + delayPerItem);
+        } catch (NumberFormatException e) {
+            System.out.println("NumberFormatException: First argument should be throughput per s");
+            delayPerItem = 10L;
+        }
 
         // Open Avro file
         File file = new File("../../data/mini-2017-02-15-00-00-XCAH-m-00019.avro");
 
-        // Deserialize Ping from disk
+        // Deserialize main.java.streaming.generator.avro.Ping from disk
         DatumReader<Ping> pingDatumReader = new SpecificDatumReader<Ping>(Ping.class);
         DataFileReader<Ping> dataFileReader = new DataFileReader<Ping>(file, pingDatumReader);
         Ping ping = null;
@@ -31,7 +40,18 @@ public class StreamingDataGenerator {
             // allocating and garbage collecting many objects for files with
             // many items.
             ping = dataFileReader.next(ping);
+
+            Long now = System.currentTimeMillis();
+            // store in Reddis
+            // Output to kafka
             System.out.println(ping);
+
+            // Sleep for time remainder
+
+            System.out.println("delayPerItem:" +delayPerItem);
+
+            Thread.sleep(  delayPerItem - (System.currentTimeMillis() - now));
+
         }
 
     }
@@ -57,13 +77,13 @@ public class StreamingDataGenerator {
 //            try {
 //
 //
-//                DatumReader<Ping> reader = new SpecificDatumReader<>(Ping.class);
-//                org.apache.avro.file.FileReader<Ping> fileReader = DataFileReader.openReader(binFile, reader);
+//                DatumReader<main.java.streaming.generator.avro.Ping> reader = new SpecificDatumReader<>(main.java.streaming.generator.avro.Ping.class);
+//                org.apache.avro.file.FileReader<main.java.streaming.generator.avro.Ping> fileReader = DataFileReader.openReader(binFile, reader);
 //
 //
-//                Ping p = fileReader.next();
+//                main.java.streaming.generator.avro.Ping p = fileReader.next();
 //                System.out.println(p.toString());
-//                Injection<Ping, byte[]> pingInjection = GenericAvroCodecs.toBinary(Ping.getClassSchema());
+//                Injection<main.java.streaming.generator.avro.Ping, byte[]> pingInjection = GenericAvroCodecs.toBinary(main.java.streaming.generator.avro.Ping.getClassSchema());
 //
 //                KafkaProducer<String, byte[]> producer = new KafkaProducer<>(config);
 //
@@ -77,7 +97,7 @@ public class StreamingDataGenerator {
 //                long totalSleepTime = 0;
 //                long previousTimestamp = start;
 //
-//                Ping datum = null;
+//                main.java.streaming.generator.avro.Ping datum = null;
 //                while (fileReader.hasNext()) {
 //                    try {
 //                        datum = fileReader.next();

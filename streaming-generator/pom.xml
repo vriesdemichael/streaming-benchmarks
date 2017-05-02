@@ -5,18 +5,15 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <parent>
-        <groupId>com.jwplayer.streaming</groupId>
-        <artifactId>benchmarks</artifactId>
-        <version>0.1.0</version>
-    </parent>
-    <modelVersion>4.0.0</modelVersion>
 
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>com.jwplayer.streaming.generator.StreamingDataGenerator</groupId>
     <artifactId>streaming-generator</artifactId>
+    <version>1.0</version>
     <packaging>jar</packaging>
 
     <properties>
-        <mainclass>StreamingDataGenerator</mainclass>
+        <mainclass>streaming.generator.StreamingDataGenerator</mainclass>
 
         <kafka-version>0.10.2.0</kafka-version>
         <slf4j.version>1.7.7</slf4j.version>
@@ -110,8 +107,8 @@
                             <goal>schema</goal>
                         </goals>
                         <configuration>
-                            <sourceDirectory>src/main/avro</sourceDirectory>
-                            <outputDirectory>src/main/java/</outputDirectory>
+                            <sourceDirectory>src/main/java/</sourceDirectory>
+                            <outputDirectory>src/</outputDirectory>
                         </configuration>
                     </execution>
                 </executions>
