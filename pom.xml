@@ -161,6 +161,12 @@ Licensed under the terms of the Apache License 2.0. Please see LICENSE file in t
             </dependency>
 
             <dependency>
+                <groupId>org.apache.kafka</groupId>
+                <artifactId>kafka-clients</artifactId>
+                <version>${kafka.version}</version>
+            </dependency>
+
+            <dependency>
                 <groupId>redis.clients</groupId>
                 <artifactId>jedis</artifactId>
                 <version>${jedis.version}</version>
