@@ -170,7 +170,7 @@ run() {
 
   elif [ "START_ZK" = "$OPERATION" ];
   then
-    start_if_needed zookeeper ZooKeeper 10 "$ZOOKEEPER_DIR/bin/zkServer.sh" start
+    start_if_needed zookeeper ZooKeeper 1 "$ZOOKEEPER_DIR/bin/zkServer.sh" start
   elif [ "STOP_ZK" = "$OPERATION" ];
   then
     stop_if_needed zookeeper ZooKeeper
