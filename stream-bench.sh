@@ -223,12 +223,14 @@ run() {
     sleep 3
   elif [ "START_LOAD" = "$OPERATION" ];
   then
-    cd data
-    start_if_needed leiningen.core.main "Load Generation" 1 $LEIN run -r -t $LOAD --configPath ../$CONF_FILE
-    cd ..
+    cd streaming-generator
+    mvn package
+    cd target
+    start_if_needed streaming-generator.src.main.java.StreamingDataGeneration "Load Generation" 1 java -jar streaming-generator-0.1.0.jar
+    cd ../../
   elif [ "STOP_LOAD" = "$OPERATION" ];
   then
-    stop_if_needed leiningen.core.main "Load Generation"
+    stop_if_needed streaming-generator.src.main.java.StreamingDataGeneration "Load Generation"
     cd data
     $LEIN run -g --configPath ../$CONF_FILE || true
     cd ..
