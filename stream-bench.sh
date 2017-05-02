@@ -11,6 +11,7 @@ MVN=${MVN:-mvn}
 GIT=${GIT:-git}
 MAKE=${MAKE:-make}
 
+ZOOKEEPER_VERSION=${ZOOKEEPER_VERSION:-"3.4.10"}
 KAFKA_VERSION=${KAFKA_VERSION:-"0.10.2.0"}
 REDIS_VERSION=${REDIS_VERSION:-"3.2.8"}
 SCALA_BIN_VERSION=${SCALA_BIN_VERSION:-"2.11"}
@@ -22,6 +23,7 @@ SPARK_VERSION=${SPARK_VERSION:-"2.1.0"}
 STORM_DIR="apache-storm-$STORM_VERSION"
 REDIS_DIR="redis-$REDIS_VERSION"
 KAFKA_DIR="kafka_$SCALA_BIN_VERSION-$KAFKA_VERSION"
+ZOOKEEPER_DIR="zookeeper-$ZOOKEEPER_VERSION"
 FLINK_DIR="flink-$FLINK_VERSION"
 SPARK_DIR="spark-$SPARK_VERSION-bin-hadoop2.7"
 
@@ -145,6 +147,10 @@ run() {
     $MAKE
     cd ..
 
+    #Fetch Zookeeper
+    ZOOKEEPER_FILE="$ZOOKEEPER_DIR.tar.gz"
+    fetch_untar_file "$ZOOKEEPER_FILE" "$APACHE_MIRROR/zookeeper/$ZOOKEEPER_DIR/$ZOOKEEPER_FILE"
+
     #Fetch Kafka
     KAFKA_FILE="$KAFKA_DIR.tgz"
     fetch_untar_file "$KAFKA_FILE" "$APACHE_MIRROR/kafka/$KAFKA_VERSION/$KAFKA_FILE"
@@ -163,11 +169,11 @@ run() {
 
   elif [ "START_ZK" = "$OPERATION" ];
   then
-    start_if_needed dev_zookeeper ZooKeeper 10 "$STORM_DIR/bin/storm" dev-zookeeper
+    start_if_needed zookeeper ZooKeeper 10 "$ZOOKEEPER_DIR/bin/zkServer.sh" start
   elif [ "STOP_ZK" = "$OPERATION" ];
   then
     stop_if_needed dev_zookeeper ZooKeeper
-    rm -rf /tmp/dev-storm-zookeeper
+    rm -rf /tmp/zookeeper
   elif [ "START_REDIS" = "$OPERATION" ];
   then
     start_if_needed redis-server Redis 1 "$REDIS_DIR/src/redis-server"
