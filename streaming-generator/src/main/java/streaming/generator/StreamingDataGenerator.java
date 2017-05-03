@@ -42,30 +42,33 @@ public class StreamingDataGenerator {
         DataFileReader<Ping> dataFileReader = new DataFileReader<Ping>(file, pingDatumReader);
         Ping ping = null;
 
-        Long startTime = System.currentTimeMillis();
-        Integer counter = 0;
+        // Store information about delay accuracy
+//        Long startTime = System.currentTimeMillis();
+//        Integer counter = 0;
+
         while (dataFileReader.hasNext()) {
             // Reuse user object by passing it to next(). This saves us from
             // allocating and garbage collecting many objects for files with
             // many items.
             ping = dataFileReader.next(ping);
-            counter++;
+
+
+            // store in Redis
             Long now = System.currentTimeMillis();
-            // store in Reddis
-
             String uuid = UUID.nameUUIDFromBytes(ping.toString().getBytes()).toString();
-
-
-
             jedis.lpush(uuid, now.toString());
             List<String> value = jedis.lrange(uuid, 0, 1);
             System.out.println(value.get(0));
 
             // Output to kafka
 
+
+            // Print information about delay accuracy
+//            counter++;
+//            System.out.println("delayPerItem: " + delayPerItem + "\tExecution time: " + (System.currentTimeMillis() - now)
+//            + "\tAverage per s" + ((System.currentTimeMillis() - startTime) / counter));
+
             // Sleep for time remainder
-            System.out.println("delayPerItem: " + delayPerItem + "\tExecution time: " + (System.currentTimeMillis() - now)
-            + "\tAverage per s" + (counter / (System.currentTimeMillis() - startTime)));
             Long delay = delayPerItem - (System.currentTimeMillis() - now);
             if (delay > 0L) {
                 Thread.sleep(delay);
