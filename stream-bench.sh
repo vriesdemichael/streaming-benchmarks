@@ -65,6 +65,7 @@ start_if_needed() {
 stop_if_needed() {
   local match="$1"
   local name="$2"
+  echo "match: " + $1 + " name: " + $2;
   local PID=`pid_match "$match"`
   if [[ "$PID" -ne "" ]];
   then
@@ -226,11 +227,11 @@ run() {
     cd streaming-generator
     mvn package
     cd target
-    start_if_needed streaming-generator.src.main.java.StreamingDataGeneration "Load Generation" 1 java -jar streaming-generator-1.0.jar $LOAD
+    start_if_needed streaming-generator-1.0.jar "java" 1 java -jar streaming-generator-1.0.jar $LOAD
     cd ../../
   elif [ "STOP_LOAD" = "$OPERATION" ];
   then
-    stop_if_needed streaming-generator.src.main.java.StreamingDataGeneration "Load Generation"
+    stop_if_needed streaming-generator-1.0.jar "java"
     cd data
     $LEIN run -g --configPath ../$CONF_FILE || true
     cd ..
