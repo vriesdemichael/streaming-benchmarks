@@ -1,14 +1,21 @@
 package streaming.generator;
 
+import com.twitter.bijection.Injection;
+import com.twitter.bijection.avro.GenericAvroCodecs;
 import org.apache.avro.file.DataFileReader;
 import org.apache.avro.io.DatumReader;
 import org.apache.avro.specific.SpecificDatumReader;
+import org.apache.kafka.clients.producer.KafkaProducer;
+import org.apache.kafka.clients.producer.ProducerRecord;
 import redis.clients.jedis.Jedis;
 import streaming.generator.avro.Ping;
 
+import kafka.javaapi.producer.Producer;
+import kafka.producer.KeyedMessage;
+import kafka.producer.ProducerConfig;
+
 import java.io.File;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * Created by Bernardez on 5/2/2017.
@@ -18,6 +25,14 @@ import java.util.UUID;
  * Output to Kafka.
  */
 public class StreamingDataGenerator {
+
+    private final static String DEFAULT_SERIALIZER = "org.apache.kafka.common.serialization.StringSerializer";
+    private final static String DEFAULT_LOG_TOPIC = "pings";
+    private final static String DEFAULT_AVRO_TOPIC = "processed_pings";
+
+    private final static String CFG_SLEEP_MULTIPLIER = "sleep_multiplier";
+    private final static String CFG_BOOTSTRAP_SERVER = "bootstrap_server";
+    private final static String CFG_INPUT_TYPE = "input_type";
 
     public static void main(String[] args) throws Exception {
         System.out.println("It works arg[0] = " + args[0]);
@@ -36,6 +51,15 @@ public class StreamingDataGenerator {
 
         // Open Redis connection
         Jedis jedis = new Jedis("localhost");
+
+        // Open Kafka connection
+        Map<String, Object> config = new HashMap<>();
+        config.put(org.apache.kafka.clients.producer.ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "bootstrap_server");
+        config.put(org.apache.kafka.clients.producer.ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, "org.apache.kafka.common.serialization.StringSerializer");
+        config.put(org.apache.kafka.clients.producer.ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, "org.apache.kafka.common.serialization.StringSerializer");
+        Injection<Ping, byte[]> pingInjection = GenericAvroCodecs.toBinary(Ping.getClassSchema());
+        KafkaProducer<String, byte[]> producer = new KafkaProducer<>(config);
+
 
         // Deserialize main.java.streaming.generator.avro.Ping from disk
         DatumReader<Ping> pingDatumReader = new SpecificDatumReader<Ping>(Ping.class);
@@ -61,12 +85,13 @@ public class StreamingDataGenerator {
             System.out.println(value.get(0));
 
             // Output to kafka
-
+            byte[] binPing = pingInjection.apply(ping);
+            producer.send(new ProducerRecord<>(props.getProperty(CFG_AVRO_TOPIC, DEFAULT_AVRO_TOPIC), Long.toString(d.getTime()), binPing));
 
             // Print information about delay accuracy
 //            counter++;
 //            System.out.println("delayPerItem: " + delayPerItem + "\tExecution time: " + (System.currentTimeMillis() - now)
-//            + "\tAverage per s" + ((System.currentTimeMillis() - startTime) / counter));
+//            + "\tAverage per item " + ((System.currentTimeMillis() - startTime) / counter));
 
             // Sleep for time remainder
             Long delay = delayPerItem - (System.currentTimeMillis() - now);
