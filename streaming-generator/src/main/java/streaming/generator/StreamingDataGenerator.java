@@ -3,9 +3,12 @@ package streaming.generator;
 import org.apache.avro.file.DataFileReader;
 import org.apache.avro.io.DatumReader;
 import org.apache.avro.specific.SpecificDatumReader;
+import redis.clients.jedis.Jedis;
 import streaming.generator.avro.Ping;
 
 import java.io.File;
+import java.util.List;
+import java.util.UUID;
 
 /**
  * Created by Bernardez on 5/2/2017.
@@ -31,26 +34,42 @@ public class StreamingDataGenerator {
         // Open Avro file
         File file = new File("../../data/mini-2017-02-15-00-00-XCAH-m-00019.avro");
 
+        // Open Redis connection
+        Jedis jedis = new Jedis("localhost");
+
         // Deserialize main.java.streaming.generator.avro.Ping from disk
         DatumReader<Ping> pingDatumReader = new SpecificDatumReader<Ping>(Ping.class);
         DataFileReader<Ping> dataFileReader = new DataFileReader<Ping>(file, pingDatumReader);
         Ping ping = null;
+
+        Long startTime = System.currentTimeMillis();
+        Integer counter = 0;
         while (dataFileReader.hasNext()) {
             // Reuse user object by passing it to next(). This saves us from
             // allocating and garbage collecting many objects for files with
             // many items.
             ping = dataFileReader.next(ping);
-
+            counter++;
             Long now = System.currentTimeMillis();
             // store in Reddis
+
+            String uuid = UUID.nameUUIDFromBytes(ping.toString().getBytes()).toString();
+
+
+
+            jedis.lpush(uuid, now.toString());
+            List<String> value = jedis.lrange(uuid, 0, 1);
+            System.out.println(value.get(0));
+
             // Output to kafka
-            System.out.println(ping);
 
             // Sleep for time remainder
-
-            System.out.println("delayPerItem:" +delayPerItem);
-
-            Thread.sleep(  delayPerItem - (System.currentTimeMillis() - now));
+            System.out.println("delayPerItem: " + delayPerItem + "\tExecution time: " + (System.currentTimeMillis() - now)
+            + "\tAverage per s" + (counter / (System.currentTimeMillis() - startTime)));
+            Long delay = delayPerItem - (System.currentTimeMillis() - now);
+            if (delay > 0L) {
+                Thread.sleep(delay);
+            }
 
         }
 
